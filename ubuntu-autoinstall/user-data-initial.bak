@@ -1,0 +1,24 @@
+#cloud-config
+autoinstall:
+  version: 1
+  user-data:
+    hostname: ubuntu-desktop-generic
+    users:
+      - name: mubeen
+        groups: sudo
+        shell: /bin/bash
+        lock_passwd: false
+        passwd: "$6$.VwuPVSffT.zsrwl$bpcLkmhfjJFjUoeHBLBejQgm63kdAfQ4dH/P182KXc0lsiqrr.KYw3uAZEoYFcEKAwneFb83Qvzyz8WyLfLs11"
+  ssh:
+    install-server: true
+
+  package_update: true
+  package_upgrade: true
+  packages: 
+    - ubuntu-server-minimal
+    - open-vm-tools-desktop
+
+  snaps:
+    - name: sublime-text
+      channel: stable
+      classic: true

@@ -1,0 +1,88 @@
+#cloud-config
+autoinstall:
+  version: 1
+  user-data:
+    hostname: lcs-standalone-tcs-sqc2
+    users:
+      - name: ctcs
+        groups: sudo
+        shell: /bin/bash
+        lock_passwd: false
+        passwd: "$6$8BfCi4sHqbpaN/P.$q1qpF0WiQb8r3tviUdeWzFugwe0mYUKMcuci0wZrvd0oSjVaWAjxVtChMEWMFRM.AXLaAFmh4DAXHOJNXIpvb."
+        ssh-authorized-keys:
+          - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCmwuWnOmq3p2YwUaqATNFQr/GWF8TGVNMb6pleK8H3XNQ9VzmFpZ7ebzLWF/Mghf8/5RDHCu6cEo7zMJlDa3YsIJPxFRAB/opsEQfBskwktjufkZbbRJru6Uf0BeuZmUooW5nywqwkN4fskBAsGVsqJOJBprWJxKjwG4dmdk5i4b3b4hZ30OLkQkiTpV4VBotTAa/bm8AP/ccO0IeG6wushicGOWQ0wIHNJD1aDLQKc97R51IWVgNbMbb97txpCBNFWYiShLnO7YurSHWcSpmrjZPBlTPJv3i+i1+HFX6y/h+n/U23dTUAxaEmOXl7HmVC9Tagp8SATMAWaGDcszNjlRnGm4QfXgtC5vnByar7WixyvPGueITVEoZZeyoCYou53TwC7QD5VKCmLw9HH2AKLoIThOkqchiJx4KEAYvQV+iVcWCZ6Z6Lj/tYYqysAcGe2QrQ0WDeDoQDvQHfDSFBRWXEx8E4yfKYSJFNiApIPPx3H6RJ6Y/ijrkpBxePXjk= leocc\mubeen.ahmed@LCC-DV5TSL3
+      - name: root
+        lock_passwd: false
+        hashed_passwd: "$6$4UrwWI65/tEIlA81$RW1mcW8b8v9zIGOjm4mOnfyupFYFJ3edq4pgBdDWdgGfie.rkBrniloGdC6.TSLnH53tIXESVRjnmcA7ZCYCU0"
+        ssh-authorized-keys:
+          - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCmwuWnOmq3p2YwUaqATNFQr/GWF8TGVNMb6pleK8H3XNQ9VzmFpZ7ebzLWF/Mghf8/5RDHCu6cEo7zMJlDa3YsIJPxFRAB/opsEQfBskwktjufkZbbRJru6Uf0BeuZmUooW5nywqwkN4fskBAsGVsqJOJBprWJxKjwG4dmdk5i4b3b4hZ30OLkQkiTpV4VBotTAa/bm8AP/ccO0IeG6wushicGOWQ0wIHNJD1aDLQKc97R51IWVgNbMbb97txpCBNFWYiShLnO7YurSHWcSpmrjZPBlTPJv3i+i1+HFX6y/h+n/U23dTUAxaEmOXl7HmVC9Tagp8SATMAWaGDcszNjlRnGm4QfXgtC5vnByar7WixyvPGueITVEoZZeyoCYou53TwC7QD5VKCmLw9HH2AKLoIThOkqchiJx4KEAYvQV+iVcWCZ6Z6Lj/tYYqysAcGe2QrQ0WDeDoQDvQHfDSFBRWXEx8E4yfKYSJFNiApIPPx3H6RJ6Y/ijrkpBxePXjk= leocc\mubeen.ahmed@LCC-DV5TSL3
+
+  ssh:
+    install-server: true
+
+  package_update: true
+  package_upgrade: true
+  packages:
+    - open-vm-tools
+    - vi
+
+  storage:
+    config:
+    - ptable: gpt
+      path: /dev/sda
+      wipe: superblock-recursive
+      preserve: false
+      name: ''
+      grub_device: true
+      type: disk
+      id: disk-sda
+    - device: disk-sda
+      size: 1048576
+      flag: bios_grub
+      number: 1
+      preserve: false
+      grub_device: false
+      offset: 1048576
+      path: /dev/sda1
+      type: partition
+      id: partition-0
+    - device: disk-sda
+      size: 536870912
+      wipe: superblock
+      number: 2
+      preserve: false
+      grub_device: false
+      offset: 2097152
+      path: /dev/sda2
+      type: partition
+      id: partition-1
+    - fstype: ext4
+      volume: partition-1
+      preserve: false
+      type: format
+      id: format-0
+    - device: disk-sda
+      size: -1
+      wipe: superblock
+      number: 3
+      preserve: false
+      grub_device: false
+      offset: 538968064
+      path: /dev/sda3
+      type: partition
+      id: partition-2
+    - fstype: ext4
+      volume: partition-2
+      preserve: false
+      type: format
+      id: format-1
+    - path: /
+      device: format-1
+      type: mount
+      id: mount-1
+    - path: /boot
+      device: format-0
+      type: mount
+      id: mount-0
+  updates: security
+  version: 1

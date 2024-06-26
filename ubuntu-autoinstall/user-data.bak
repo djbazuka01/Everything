@@ -1,0 +1,82 @@
+#cloud-config
+autoinstall:
+  version: 1
+  user-data:
+    hostname: pacs-dcm4chee
+    users:
+      - name: leouser
+        groups: sudo
+        shell: /bin/bash
+        lock_passwd: false
+        passwd: "$6$MWH8u6EJiFi9s1Uu$Ap3VMku4NCaNTWXNfX..3mvZUKL/KJdQj6K8VLeRclqC9XWFGOX.3gc8nlg288rxPzHXhHxZYFf1W2BYTrzo61"
+
+  ssh:
+    install-server: true
+
+  package_update: true
+  package_upgrade: true
+  packages:
+    - ubuntu-server-minimal
+    - open-vm-tools
+    - vi
+
+  storage:
+    config:
+    - ptable: gpt
+      path: /dev/sda
+      wipe: superblock-recursive
+      preserve: false
+      name: ''
+      grub_device: true
+      type: disk
+      id: disk-sda
+    - device: disk-sda
+      size: 1048576
+      flag: bios_grub
+      number: 1
+      preserve: false
+      grub_device: false
+      offset: 1048576
+      path: /dev/sda1
+      type: partition
+      id: partition-0
+    - device: disk-sda
+      size: 536870912
+      wipe: superblock
+      number: 2
+      preserve: false
+      grub_device: false
+      offset: 2097152
+      path: /dev/sda2
+      type: partition
+      id: partition-1
+    - fstype: ext4
+      volume: partition-1
+      preserve: false
+      type: format
+      id: format-0
+    - device: disk-sda
+      size: -1
+      wipe: superblock
+      number: 3
+      preserve: false
+      grub_device: false
+      offset: 538968064
+      path: /dev/sda3
+      type: partition
+      id: partition-2
+    - fstype: ext4
+      volume: partition-2
+      preserve: false
+      type: format
+      id: format-1
+    - path: /
+      device: format-1
+      type: mount
+      id: mount-1
+    - path: /boot
+      device: format-0
+      type: mount
+      id: mount-0
+  updates: security
+  version: 1
